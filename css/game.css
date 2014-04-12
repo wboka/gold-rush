@@ -24,3 +24,11 @@
 .btn-group {
 	margin: 0 auto;
 }
+
+.coin {
+	position: absolute;
+	height: 30px;
+	width: 30px;
+	background: #FFFF00;
+	border-radius: 100%;
+}

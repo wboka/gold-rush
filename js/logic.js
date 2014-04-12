@@ -1,18 +1,15 @@
 var bounds;
+var coins = 6;
 var playerPos;
+var isPlaying = false;
 
 $(document).ready(function () {
 	setSize();	
 	setBounds();
 		
-	$("#gameCanvas").on("focus", function () {
-		isPlaying = true;
-		checkGame();
-	}).on("blur", function () {
-		isPlaying = false;
-		checkGame();
-	}).on("keydown", function (e) {
+	$("#gameCanvas").on("keydown", function (e) {
 		setPosition();
+		
 		switch(e.which) {
 			case 37:
 				moveLeft();
@@ -56,6 +53,22 @@ $(document).ready(function () {
 		$("#rightMode, #leftMode").toggleClass("active");
 		$(".actionButtons").removeClass("pull-left").addClass("pull-right");
 	});
+
+	$("#newRelaxedGame").on("click", function () {
+		isPlaying = true;
+		drawCoins(coins);
+		$("#gameCanvas").focus();		
+		resetPosition();
+	});
+		
+	$("#newTimedGame").on("click", function () {
+		$("#newGame").addClass("disabled");
+		isPlaying = true;
+		drawCoins(coins);
+		$("#gameCanvas").focus();		
+		resetPosition();
+		startTimer(60);
+	});
 });
 
 $(window).resize(function() {
@@ -65,28 +78,28 @@ $(window).resize(function() {
 	resetPosition();
 });
 
-function checkGame() {
-
-}
-
 function moveLeft() {
-	if (!checkPosLeft())
-		$("#playerToken").css({"marginLeft" : "-=30px"});	
+	if (isPlaying)
+		if (!checkPosLeft())
+			$("#playerToken").css({"marginLeft" : "-=30px"});	
 }
 
 function moveRight() {
-	if (!checkPosRight())	
-		$("#playerToken").css({"marginLeft" : "+=30px"});
+	if (isPlaying)
+		if (!checkPosRight())	
+			$("#playerToken").css({"marginLeft" : "+=30px"});
 }
 
 function moveUp() {
-	if (!checkPosTop())
-		$("#playerToken").css({"marginTop" : "-=30px"});
+	if (isPlaying)
+		if (!checkPosTop())
+			$("#playerToken").css({"marginTop" : "-=30px"});
 }
 
 function moveDown() {
-	if (!checkPosBottom())
-		$("#playerToken").css({"marginTop" : "+=30px"});
+	if (isPlaying)
+		if (!checkPosBottom())
+			$("#playerToken").css({"marginTop" : "+=30px"});
 }
 
 function resetPosition() {
@@ -135,4 +148,44 @@ function setSize() {
 	widthFactor = parseInt(oldWidth/30, 10);
 	newWidth = widthFactor * 30;
 	$("#gameCanvas").width(newWidth);
+}
+
+function startTimer(time) {
+	var timer = setInterval(function(){
+		$("#gameTimer").text(time--);
+
+		if (time < 0) {
+			$("#newGame").removeClass("disabled");
+			isPlaying = false;
+			clearInterval(timer);		
+		}
+	}, 1000);	
+}
+
+function drawCoins(numOfCoins) {
+	removeCoins();
+	j = -1;
+	html = [];
+	w = $("#gameCanvas").width() - 30;
+	h = $("#gameCanvas").height() - 30;
+
+	for (var i = 0; i < numOfCoins; i++) {		
+		coinPosX = Math.floor(Math.random() * w) + 30;
+		coinPosX = coinPosX - (coinPosX % 30);
+		
+		coinPosY = Math.floor(Math.random() * h) + 30;
+		coinPosY = coinPosY - (coinPosY % 30);
+		
+		html[++j] = "<div class='coin' style='margin-left: ";
+		html[++j] = coinPosX + "px; margin-top: " + coinPosY + "px;'>";
+		html[++j] = "</div>";
+	}
+
+	html = html.join("");
+	
+	$("#gameCanvas").append(html);
+}
+
+function removeCoins() {
+	$(".coin").remove();
 }

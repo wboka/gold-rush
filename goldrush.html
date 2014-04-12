@@ -31,7 +31,7 @@
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav">
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown">New Game <b class="caret"></b></a>
+							<a href="#" id="newGame" class="dropdown-toggle" data-toggle="dropdown">New Game <b class="caret"></b></a>
 							<ul class="dropdown-menu">
 								<li><a href="#" id="newRelaxedGame">Relaxed Game</a></li>
 								<li><a href="#" id="newTimedGame">Timed Game</a></li>						
@@ -43,7 +43,7 @@
 		</nav>
 		
 		<div id="content" class="well">
-			<h1 class="pull-left">Gold Rush</h1>
+			<h1 class="pull-left">Gold Rush <small>Time left: <span id="gameTimer">60</span></small></h1>
 			<div class="btn-group pull-right">
 				<button type="button" class="btn btn-default btn-lg disabled">Mode:</button>
 				<button type="button" class="btn btn-default btn-lg active" id="leftMode">Left</button>				
