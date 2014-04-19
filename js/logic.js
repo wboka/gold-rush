@@ -1,6 +1,7 @@
 var bounds;
 var coins = 6;
 var playerPos;
+var timer = null;
 var isPlaying = false;
 
 $(document).ready(function () {
@@ -26,6 +27,7 @@ $(document).ready(function () {
 			default:
 				break;
 		}
+		collide($("#playerToken"), $(".coin"));
 	});
 	
 	$("#goLeft").on("click", function () {
@@ -77,6 +79,21 @@ $(window).resize(function() {
 	setBounds();
 	resetPosition();
 });
+
+function collide($player, $coins) {
+		playerLeft = playerPos.left;
+		playerTop = playerPos.top;
+		
+		$coins.each(function () {
+			$coin = $(this);
+			coinLeft = Math.floor($coin.offset().left);
+			coinTop = Math.floor($coin.offset().top);
+			
+			if (playerLeft == coinLeft && playerTop == coinTop) {
+				removeCoin($coin.attr("id"));
+			}
+		});
+}
 
 function moveLeft() {
 	if (isPlaying)
@@ -151,13 +168,12 @@ function setSize() {
 }
 
 function startTimer(time) {
-	var timer = setInterval(function(){
+	timer = setInterval(function(){
 		$("#gameTimer").text(time--);
 
 		if (time < 0) {
-			$("#newGame").removeClass("disabled");
-			isPlaying = false;
-			clearInterval(timer);		
+			finishGame();
+			alert("Game over!");
 		}
 	}, 1000);	
 }
@@ -176,7 +192,7 @@ function drawCoins(numOfCoins) {
 		coinPosY = Math.floor(Math.random() * h) + 30;
 		coinPosY = coinPosY - (coinPosY % 30);
 		
-		html[++j] = "<div class='coin' style='margin-left: ";
+		html[++j] = "<div class='coin' id='coin_" + i + "' style='margin-left: ";
 		html[++j] = coinPosX + "px; margin-top: " + coinPosY + "px;'>";
 		html[++j] = "</div>";
 	}
@@ -186,6 +202,25 @@ function drawCoins(numOfCoins) {
 	$("#gameCanvas").append(html);
 }
 
+function checkCoins(){
+	return $(".coin").length == 0;
+}
+
+function removeCoin(coinID) {
+	$("#" + coinID).remove();
+	
+	if (checkCoins()) {
+		finishGame();
+		alert("You Win!");
+	}
+}
+
 function removeCoins() {
 	$(".coin").remove();
+}
+
+function finishGame() {
+	$("#newGame").removeClass("disabled");
+	isPlaying = false;
+	clearInterval(timer);
 }
